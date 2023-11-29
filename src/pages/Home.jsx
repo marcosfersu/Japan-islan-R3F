@@ -14,7 +14,7 @@ const Home = () => {
 	const ajutIslandForScreenSize = () => {
 		let screenScale = null;
 		let screenPosition = [0, -1, 0];
-		let islandRotation = [0, 4.7, 0];
+		let islandRotation = [0.2, 4.7, 0];
 
 		if (window.innerWidth < 768) {
 			screenScale = [0.9, 0.9, 0.9];
@@ -34,8 +34,13 @@ const Home = () => {
 				camera={{ near: 0.1, far: 1000 }}
 			>
 				<Suspense fallback={<Loader />}>
-					<directionalLight />
-					<ambientLight />
+					<directionalLight position={[1, 1, 1]} intensity={2} />
+					<ambientLight intensity={2} />
+					<hemisphereLight
+						skyColor="b1e1ff"
+						groundColor="#000000"
+						intensity={1}
+					/>
 					<Insland
 						scale={screenScale}
 						position={screenPosition}
