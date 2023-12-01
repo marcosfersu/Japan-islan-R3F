@@ -1,13 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 
-import spaceship from "../assets/spaceship.glb";
-import { useGLTF } from "@react-three/drei";
+import spaceship from "../assets/spaceship2.glb";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 
 const Spaceship = ({ isRotating, setIsRotating, limitRotation, ...props }) => {
-  const { scene } = useGLTF(spaceship);
-
-  const islandRef = useRef();
+  const spaceshipRef = useRef();
+  const { scene, animations } = useGLTF(spaceship);
+  const { actions } = useAnimations(animations, spaceshipRef);
 
   const { gl, viewport } = useThree();
 
@@ -31,9 +31,8 @@ const Spaceship = ({ isRotating, setIsRotating, limitRotation, ...props }) => {
       const deltaY = (clientY - lastY.current) / viewport.height;
 
       if (limitRotation <= 0.4 && limitRotation >= 0) {
-        console.log(limitRotation);
-        islandRef.current.position.y -= deltaY * 0.035 * Math.PI;
-        islandRef.current.rotation.x += deltaY * 0.01 * Math.PI;
+        spaceshipRef.current.position.y -= deltaY * 0.035 * Math.PI;
+        spaceshipRef.current.rotation.x += deltaY * 0.01 * Math.PI;
       }
 
       lastY.current = clientY;
@@ -45,6 +44,13 @@ const Spaceship = ({ isRotating, setIsRotating, limitRotation, ...props }) => {
     canvas.addEventListener("pointerdown", handlePointerDown);
     canvas.addEventListener("pointermove", handlePointerMove);
 
+    console.log(actions);
+    if (isRotating) {
+      actions["rockedAction.001"].play();
+      actions["partcles"].play();
+      actions["partcles.001"].play();
+    }
+
     return () => {
       canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointermove", handlePointerMove);
@@ -52,7 +58,7 @@ const Spaceship = ({ isRotating, setIsRotating, limitRotation, ...props }) => {
   }, [gl, handlePointerDown, handlePointerMove]);
 
   return (
-    <mesh ref={islandRef} {...props}>
+    <mesh ref={spaceshipRef} {...props}>
       <primitive object={scene} />
     </mesh>
   );

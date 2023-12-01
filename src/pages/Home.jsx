@@ -58,15 +58,6 @@ const Home = () => {
           shadow-bias={-0.0001}
           intensity={0.5}
         />
-        {/* <spotLight
-          castShadow
-          intensity={30}
-          angle={1}
-          penumbra={1}
-          position={[1, 3, 3]}
-          shadow-mapSize={[1024, 1024]}
-          shadow-bias={-0.0001}
-        /> */}
         <ambientLight intensity={1} />
         <hemisphereLight
           skyColor="b1e1ff"
@@ -74,20 +65,6 @@ const Home = () => {
           intensity={2}
         />
 
-        {/* <Canvas dpr={[1.5, 2]} shadows>
-        <ambientLight intensity={0.75} />
-        <PerspectiveCamera makeDefault position={[0, 0, 16]} fov={75}>
-          <pointLight intensity={50} position={[0, 0, 0]} />
-          <spotLight
-            castShadow
-            intensity={30}
-            angle={0.2}
-            penumbra={1}
-            position={[0, 0, 0]}
-            shadow-mapSize={[1024, 1024]}
-            shadow-bias={-0.0001}
-          />
-        </PerspectiveCamera> */}
         <Suspense fallback={<Loader />}>
           <Insland
             scale={screenScale}
@@ -109,7 +86,7 @@ const Home = () => {
           />
         </Suspense>
 
-        <OrbitControls enableZoom={true} />
+        <OrbitControls enableZoom={true} minDistance={1.5} maxDistance={8} />
 
         <Stars radius={500} depth={50} count={1000} factor={10} noise={20} />
       </Canvas>
