@@ -11,608 +11,621 @@ import { a } from "@react-spring/three";
 import IslandScene from "../assets/japan-island2.glb";
 
 const Island = ({
-	isRotating,
-	setIsRotating,
-	setCurrentStage,
-	limitRotation,
-	setLimitRotation,
-	...props
+  isRotating,
+  setIsRotating,
+  setCurrentStage,
+  limitRotation,
+  setLimitRotation,
+  setIsMoving,
+  ...props
 }) => {
-	const islandRef = useRef();
+  const islandRef = useRef();
 
-	const { gl, viewport } = useThree();
-	const { nodes, materials } = useGLTF(IslandScene);
+  const { gl, viewport } = useThree();
+  const { nodes, materials } = useGLTF(IslandScene);
 
-	const lastX = useRef(0);
-	const lastY = useRef(0);
-	const rotationSpeed = useRef(0);
-	const dampingFactor = 0.95;
+  const lastX = useRef(0);
+  const lastY = useRef(0);
+  const rotationSpeed = useRef(0);
+  const dampingFactor = 0.95;
 
-	const handlePointerDown = e => {
-		e.stopPropagation();
-		e.preventDefault();
-		setIsRotating(true);
+  const handlePointerDown = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(true);
+    setIsMoving(true);
 
-		const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-		const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-		lastX.current = clientX;
-		lastY.current = clientY;
-	};
-	const handlePointerUp = e => {
-		e.stopPropagation();
-		e.preventDefault();
-		setIsRotating(false);
-	};
-	const handlePointerMove = e => {
-		e.stopPropagation();
-		e.preventDefault();
+    lastX.current = clientX;
+    lastY.current = clientY;
+  };
+  const handlePointerUp = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsRotating(false);
+    if (rotationSpeed.current === 0) setIsMoving(false);
+  };
+  const handlePointerMove = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-		if (isRotating) {
-			const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-			const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+    if (isRotating) {
+      const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+      const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-			const deltaX = (clientX - lastX.current) / viewport.width;
-			const deltaY = (clientY - lastY.current) / viewport.height;
+      const deltaX = (clientX - lastX.current) / viewport.width;
+      const deltaY = (clientY - lastY.current) / viewport.height;
 
-			islandRef.current.rotation.y += deltaX * 0.01 * Math.PI;
+      islandRef.current.rotation.y += deltaX * 0.01 * Math.PI;
 
-			setLimitRotation(islandRef.current.rotation.x + deltaY * 0.01 * Math.PI);
-			if (limitRotation <= 0.4 && limitRotation >= 0) {
-				islandRef.current.rotation.x += deltaY * 0.01 * Math.PI;
-			}
+      setLimitRotation(islandRef.current.rotation.x + deltaY * 0.01 * Math.PI);
+      if (limitRotation <= 0.4 && limitRotation >= 0) {
+        islandRef.current.rotation.x += deltaY * 0.01 * Math.PI;
+      }
 
-			lastX.current = clientX;
-			lastY.current = clientY;
-			rotationSpeed.current = deltaX * 0.01 * Math.PI;
-		}
-	};
+      lastX.current = clientX;
+      lastY.current = clientY;
+      rotationSpeed.current = deltaX * 0.01 * Math.PI;
+    }
+  };
 
-	const handleKeyDown = e => {
-		if (e.key == "ArrowLeft") {
-			if (!isRotating) setIsRotating(true);
+  const handleKeyDown = (e) => {
+    if (e.key == "ArrowLeft") {
+      if (!isRotating) {
+        setIsMoving(true);
+        setIsRotating(true);
+      }
 
-			islandRef.current.rotation.y -= 0.005 * Math.PI;
-		} else if (e.key == "ArrowRight") {
-			if (!isRotating) setIsRotating(true);
+      islandRef.current.rotation.y -= 0.005 * Math.PI;
+    } else if (e.key == "ArrowRight") {
+      if (!isRotating) {
+        setIsMoving(true);
+        setIsRotating(true);
+      }
 
-			islandRef.current.rotation.y += 0.005 * Math.PI;
-		}
-	};
+      islandRef.current.rotation.y += 0.005 * Math.PI;
+    }
+  };
 
-	const handleKeyup = e => {
-		if (e.key === "ArrowLeft" || e.key === "ArrowRight") setIsRotating(false);
-	};
+  const handleKeyup = (e) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      setIsRotating(false);
+      setIsMoving(false);
+    }
+  };
 
-	useFrame(() => {
-		if (!isRotating) {
-			rotationSpeed.current *= dampingFactor;
+  useFrame(() => {
+    if (!isRotating && Math.abs(rotationSpeed.current) > 0) {
+      if (Math.abs(rotationSpeed.current) < 0.01) setIsMoving(false);
+    }
+    if (!isRotating) {
+      rotationSpeed.current *= dampingFactor;
 
-			if (Math.abs(rotationSpeed.current) < 0.001) {
-				rotationSpeed.current = 0;
-			}
+      if (Math.abs(rotationSpeed.current) < 0.001) rotationSpeed.current = 0;
 
-			islandRef.current.rotation.y += rotationSpeed.current;
-		} else {
-			const rotation = islandRef.current.rotation.y;
+      islandRef.current.rotation.y += rotationSpeed.current;
+    } else {
+      const rotation = islandRef.current.rotation.y;
 
-			const normalizedRotation =
-				((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      const normalizedRotation =
+        ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
-			// Set the current stage based on the island's orientation
-			switch (true) {
-				case normalizedRotation >= 5.45 && normalizedRotation <= 5.85:
-					setCurrentStage(4);
-					break;
-				case normalizedRotation >= 0.85 && normalizedRotation <= 1.3:
-					setCurrentStage(3);
-					break;
-				case normalizedRotation >= 2.4 && normalizedRotation <= 2.6:
-					setCurrentStage(2);
-					break;
-				case normalizedRotation >= 4.25 && normalizedRotation <= 4.75:
-					setCurrentStage(1);
-					break;
-				default:
-					setCurrentStage(null);
-			}
-		}
-	});
+      // Set the current stage based on the island's orientation
+      switch (true) {
+        case normalizedRotation >= 5.45 && normalizedRotation <= 5.85:
+          setCurrentStage(4);
+          break;
+        case normalizedRotation >= 0.85 && normalizedRotation <= 1.3:
+          setCurrentStage(3);
+          break;
+        case normalizedRotation >= 2.4 && normalizedRotation <= 2.6:
+          setCurrentStage(2);
+          break;
+        case normalizedRotation >= 4.25 && normalizedRotation <= 4.75:
+          setCurrentStage(1);
+          break;
+        default:
+          setCurrentStage(null);
+      }
+    }
+  });
 
-	useEffect(() => {
-		const canvas = gl.domElement;
-		canvas.addEventListener("pointerdown", handlePointerDown);
-		canvas.addEventListener("pointerup", handlePointerUp);
-		canvas.addEventListener("pointermove", handlePointerMove);
-		document.addEventListener("keydown", handleKeyDown);
-		document.addEventListener("keyup", handleKeyup);
+  useEffect(() => {
+    const canvas = gl.domElement;
+    canvas.addEventListener("pointerdown", handlePointerDown);
+    canvas.addEventListener("pointerup", handlePointerUp);
+    canvas.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyup);
 
-		return () => {
-			canvas.removeEventListener("pointerdown", handlePointerDown);
-			canvas.removeEventListener("pointerup", handlePointerUp);
-			canvas.removeEventListener("pointermove", handlePointerMove);
-			document.removeEventListener("keydown", handleKeyDown);
-			document.removeEventListener("keyup", handleKeyup);
-		};
-	}, [gl, handlePointerDown, handlePointerUp, handlePointerMove]);
+    return () => {
+      canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("pointerup", handlePointerUp);
+      canvas.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyup);
+    };
+  }, [gl, handlePointerDown, handlePointerUp, handlePointerMove]);
 
-	return (
-		<a.group ref={islandRef} {...props}>
-			<group position={[0, 0, 0]}>
-				<mesh
-					receiveShadow
-					geometry={nodes.Circle003.geometry}
-					material={materials.Land}
-				/>
-				<mesh
-					receiveShadow
-					geometry={nodes.Circle003_1.geometry}
-					material={materials["Land-3"]}
-				/>
-				<mesh
-					receiveShadow
-					geometry={nodes.Circle003_2.geometry}
-					material={materials["Land-2"]}
-				/>
-				<mesh
-					receiveShadow
-					geometry={nodes.Circle003_3.geometry}
-					material={materials["Land-4"]}
-				/>
-			</group>
-			<group position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006.geometry}
-					material={materials.Roof}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_1.geometry}
-					material={materials.Wood}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_2.geometry}
-					material={materials["Wood-door"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_3.geometry}
-					material={materials.Estructure}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_4.geometry}
-					material={materials["Balcony-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_5.geometry}
-					material={materials.Door}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_6.geometry}
-					material={materials.Balcony}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_7.geometry}
-					material={materials.Leaf}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_8.geometry}
-					material={materials["Estructure-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_9.geometry}
-					material={materials["Wood-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_10.geometry}
-					material={materials.Flowerpot}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_11.geometry}
-					material={materials["Leaf-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_12.geometry}
-					material={materials.Sing}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_13.geometry}
-					material={materials.Black}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_14.geometry}
-					material={materials["Leaf-b-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_15.geometry}
-					material={materials.Water}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_16.geometry}
-					material={materials.Land}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_17.geometry}
-					material={materials["Land-4"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_18.geometry}
-					material={materials["Wood-3"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_19.geometry}
-					material={materials.Metal}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_20.geometry}
-					material={materials.cable}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_21.geometry}
-					material={materials.red}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_22.geometry}
-					material={materials.Bamboo}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_23.geometry}
-					material={materials.glass}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder006_24.geometry}
-					material={materials["Metal-2"]}
-				/>
-			</group>
-			<group position={[0, 0, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle005.geometry}
-					material={materials["Metal-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle005_1.geometry}
-					material={materials["red-2"]}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.rire.geometry}
-				material={materials.Balcony}
-				position={[0, 0, 0]}
-			/>
-			<group position={[0, 0, 0]} rotation={[0, -0.393, -Math.PI]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013.geometry}
-					material={materials["Land-6"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013_1.geometry}
-					material={materials.Orange}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013_2.geometry}
-					material={materials.Black}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013_3.geometry}
-					material={materials.Balcony}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013_4.geometry}
-					material={materials["Wood-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle013_5.geometry}
-					material={materials.Sing}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.tree.geometry}
-				material={materials["Wood-3"]}
-				position={[0, 0, 0]}
-				rotation={[-Math.PI, 0.702, -Math.PI]}
-			/>
-			<group position={[0, 0, 0]} rotation={[0, 1.018, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube042.geometry}
-					material={materials.Black}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube042_1.geometry}
-					material={materials.Orange}
-				/>
-			</group>
-			<group position={[0, 0, 0]} rotation={[-0.148, -1.463, -0.307]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Mesh_2.geometry}
-					material={materials["Leaf-b-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Mesh_3.geometry}
-					material={materials["Leaf-b"]}
-				/>
-			</group>
-			<group position={[0, 0, 0]} rotation={[0, -0.498, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube.geometry}
-					material={materials["Wood-door"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube_1.geometry}
-					material={materials.glass}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube_2.geometry}
-					material={materials.Estructure}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube_3.geometry}
-					material={materials["Leaf-b"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube_4.geometry}
-					material={materials["Metal-2"]}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.water.geometry}
-				material={materials.Water}
-				position={[0, 0, 0]}
-			/>
-			<group position={[0, 0, 0]} rotation={[0.045, -0.547, 0.152]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder012.geometry}
-					material={materials.Bamboo}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cylinder012_1.geometry}
-					material={materials["Wood-2"]}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.cube.geometry}
-				material={materials.Metal}
-				position={[0, 0, 0]}
-				rotation={[0, 0.478, 0]}
-			/>
-			<group position={[0, 0, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Vert004.geometry}
-					material={materials["Wood-3"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Vert004_1.geometry}
-					material={materials.Metal}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Vert004_2.geometry}
-					material={materials["Metal-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Vert004_3.geometry}
-					material={materials["Balcony-2"]}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.Vert005.geometry}
-				material={materials.cable}
-				position={[0, 0, 0]}
-			/>
-			<group position={[0, 0, 0]} rotation={[0, 0.63, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube061.geometry}
-					material={materials.Rock}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube061_1.geometry}
-					material={materials["Rock-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube061_2.geometry}
-					material={materials.red}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube061_3.geometry}
-					material={materials.Black}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube061_4.geometry}
-					material={materials["Wood-door"]}
-				/>
-			</group>
-			<group position={[0, 0, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle016.geometry}
-					material={materials["Land-6"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle016_1.geometry}
-					material={materials["Land-5"]}
-				/>
-			</group>
-			<group position={[0, 0, 0]} rotation={[0, -0.778, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube075.geometry}
-					material={materials.Metal}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube075_1.geometry}
-					material={materials["Metal-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube075_2.geometry}
-					material={materials.Black}
-				/>
-			</group>
-			<group position={[0, 0, 0]} rotation={[1.473, 0.612, 0.182]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube080.geometry}
-					material={materials["Rock-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Cube080_1.geometry}
-					material={materials.Rock}
-				/>
-			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.grass.geometry}
-				material={materials["Leaf-2"]}
-				position={[0, 0, 0]}
-				rotation={[0.545, 0.874, -0.453]}
-			/>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.box.geometry}
-				material={materials.Box}
-				position={[0, 0, 0]}
-				rotation={[0, 1.54, 0]}
-			/>
-			<group position={[0, 0, 0]}>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle030.geometry}
-					material={materials["Balcony-2"]}
-				/>
-				<mesh
-					castShadow
-					receiveShadow
-					geometry={nodes.Circle030_1.geometry}
-					material={materials.cable}
-				/>
-			</group>
-		</a.group>
-	);
+  return (
+    <a.group ref={islandRef} {...props}>
+      <group position={[0, 0, 0]}>
+        <mesh
+          receiveShadow
+          geometry={nodes.Circle003.geometry}
+          material={materials.Land}
+        />
+        <mesh
+          receiveShadow
+          geometry={nodes.Circle003_1.geometry}
+          material={materials["Land-3"]}
+        />
+        <mesh
+          receiveShadow
+          geometry={nodes.Circle003_2.geometry}
+          material={materials["Land-2"]}
+        />
+        <mesh
+          receiveShadow
+          geometry={nodes.Circle003_3.geometry}
+          material={materials["Land-4"]}
+        />
+      </group>
+      <group position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006.geometry}
+          material={materials.Roof}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_1.geometry}
+          material={materials.Wood}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_2.geometry}
+          material={materials["Wood-door"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_3.geometry}
+          material={materials.Estructure}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_4.geometry}
+          material={materials["Balcony-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_5.geometry}
+          material={materials.Door}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_6.geometry}
+          material={materials.Balcony}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_7.geometry}
+          material={materials.Leaf}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_8.geometry}
+          material={materials["Estructure-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_9.geometry}
+          material={materials["Wood-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_10.geometry}
+          material={materials.Flowerpot}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_11.geometry}
+          material={materials["Leaf-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_12.geometry}
+          material={materials.Sing}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_13.geometry}
+          material={materials.Black}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_14.geometry}
+          material={materials["Leaf-b-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_15.geometry}
+          material={materials.Water}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_16.geometry}
+          material={materials.Land}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_17.geometry}
+          material={materials["Land-4"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_18.geometry}
+          material={materials["Wood-3"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_19.geometry}
+          material={materials.Metal}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_20.geometry}
+          material={materials.cable}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_21.geometry}
+          material={materials.red}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_22.geometry}
+          material={materials.Bamboo}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_23.geometry}
+          material={materials.glass}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder006_24.geometry}
+          material={materials["Metal-2"]}
+        />
+      </group>
+      <group position={[0, 0, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle005.geometry}
+          material={materials["Metal-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle005_1.geometry}
+          material={materials["red-2"]}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.rire.geometry}
+        material={materials.Balcony}
+        position={[0, 0, 0]}
+      />
+      <group position={[0, 0, 0]} rotation={[0, -0.393, -Math.PI]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013.geometry}
+          material={materials["Land-6"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013_1.geometry}
+          material={materials.Orange}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013_2.geometry}
+          material={materials.Black}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013_3.geometry}
+          material={materials.Balcony}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013_4.geometry}
+          material={materials["Wood-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle013_5.geometry}
+          material={materials.Sing}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.tree.geometry}
+        material={materials["Wood-3"]}
+        position={[0, 0, 0]}
+        rotation={[-Math.PI, 0.702, -Math.PI]}
+      />
+      <group position={[0, 0, 0]} rotation={[0, 1.018, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube042.geometry}
+          material={materials.Black}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube042_1.geometry}
+          material={materials.Orange}
+        />
+      </group>
+      <group position={[0, 0, 0]} rotation={[-0.148, -1.463, -0.307]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Mesh_2.geometry}
+          material={materials["Leaf-b-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Mesh_3.geometry}
+          material={materials["Leaf-b"]}
+        />
+      </group>
+      <group position={[0, 0, 0]} rotation={[0, -0.498, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube.geometry}
+          material={materials["Wood-door"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube_1.geometry}
+          material={materials.glass}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube_2.geometry}
+          material={materials.Estructure}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube_3.geometry}
+          material={materials["Leaf-b"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube_4.geometry}
+          material={materials["Metal-2"]}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.water.geometry}
+        material={materials.Water}
+        position={[0, 0, 0]}
+      />
+      <group position={[0, 0, 0]} rotation={[0.045, -0.547, 0.152]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder012.geometry}
+          material={materials.Bamboo}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder012_1.geometry}
+          material={materials["Wood-2"]}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.cube.geometry}
+        material={materials.Metal}
+        position={[0, 0, 0]}
+        rotation={[0, 0.478, 0]}
+      />
+      <group position={[0, 0, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Vert004.geometry}
+          material={materials["Wood-3"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Vert004_1.geometry}
+          material={materials.Metal}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Vert004_2.geometry}
+          material={materials["Metal-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Vert004_3.geometry}
+          material={materials["Balcony-2"]}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Vert005.geometry}
+        material={materials.cable}
+        position={[0, 0, 0]}
+      />
+      <group position={[0, 0, 0]} rotation={[0, 0.63, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube061.geometry}
+          material={materials.Rock}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube061_1.geometry}
+          material={materials["Rock-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube061_2.geometry}
+          material={materials.red}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube061_3.geometry}
+          material={materials.Black}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube061_4.geometry}
+          material={materials["Wood-door"]}
+        />
+      </group>
+      <group position={[0, 0, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle016.geometry}
+          material={materials["Land-6"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle016_1.geometry}
+          material={materials["Land-5"]}
+        />
+      </group>
+      <group position={[0, 0, 0]} rotation={[0, -0.778, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube075.geometry}
+          material={materials.Metal}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube075_1.geometry}
+          material={materials["Metal-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube075_2.geometry}
+          material={materials.Black}
+        />
+      </group>
+      <group position={[0, 0, 0]} rotation={[1.473, 0.612, 0.182]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube080.geometry}
+          material={materials["Rock-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube080_1.geometry}
+          material={materials.Rock}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.grass.geometry}
+        material={materials["Leaf-2"]}
+        position={[0, 0, 0]}
+        rotation={[0.545, 0.874, -0.453]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.box.geometry}
+        material={materials.Box}
+        position={[0, 0, 0]}
+        rotation={[0, 1.54, 0]}
+      />
+      <group position={[0, 0, 0]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle030.geometry}
+          material={materials["Balcony-2"]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Circle030_1.geometry}
+          material={materials.cable}
+        />
+      </group>
+    </a.group>
+  );
 };
 
 export default Island;
