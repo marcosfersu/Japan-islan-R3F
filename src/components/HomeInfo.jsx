@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const InfoBox = ({ text, link, btnText }) => (
-	<div className="info-box cursor-auto">
+	<div className="info-box cursor-auto select-none">
 		<p className="font-medium sm:text-xl text-center">{text}</p>
 		<Link to={link} className="neo-brutalism-white neo-btn">
 			{btnText}{" "}
@@ -11,7 +11,7 @@ const InfoBox = ({ text, link, btnText }) => (
 
 const renderContent = {
 	1: (
-		<h1 className="sm:text-xl sm:leading-snug text-center neo-brutalism-blue py-4 px-8 text-white mx-4 cursor-auto">
+		<h1 className="sm:text-xl sm:leading-snug text-center neo-brutalism-blue py-4 px-8 text-white mx-4 cursor-auto select-none">
 			Lorem, ipsum dolor sit amet.
 			<br />
 			pariatur harum beatae ab iste.
