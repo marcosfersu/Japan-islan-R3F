@@ -2,15 +2,16 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense, useState } from "react";
 import Loader from "../components/Loader";
 
+import Spaceship from "../models/Spaceship";
 import Insland from "../models/Island";
+import HomeInfo from "../components/HomeInfo";
+
 import {
 	Environment,
 	OrbitControls,
 	PerspectiveCamera,
 	Stars,
 } from "@react-three/drei";
-import Spaceship from "../models/SpaceShip";
-import HomeInfo from "../components/HomeInfo";
 
 {
 	/* <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center">
