@@ -1,10 +1,47 @@
 .bg {
-  position: absolute;
-  background: radial-gradient(
-    at 50% 100%,
-    #5a2e33 0%,
-    #272730 40%,
-    #171720 80%,
-    #191935 100%
-  );
+	position: absolute;
+	background: radial-gradient(
+		at 50% 100%,
+		#5a2e33 0%,
+		#272730 40%,
+		#171720 80%,
+		#191935 100%
+	);
+}
+
+.space-card {
+	box-shadow: 20px 20px 50px rgba(256, 256, 256, 0.1) !important;
+	border-radius: 15px !important;
+	background: rgba(256, 256, 256, 0.1) !important;
+	border-top: 1px solid rgba(256, 256, 256, 0.3) !important;
+	border-left: 1px solid rgba(256, 256, 256, 0.3) !important;
+	backdrop-filter: blur(3px) !important;
+	padding-top: 1.8em !important;
+	padding-bottom: 1em !important;
+	overflow: hidden;
+	align-items: center !important;
+}
+
+.space-card .num-card {
+	position: absolute;
+	top: -5px;
+	right: 10px;
+	font-size: 1.5em;
+	color: rgba(256, 256, 256, 0.3);
+	pointer-events: none;
+}
+
+.btn-card {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 8px 20px;
+	background: #fff;
+	margin-top: 5px;
+	color: #000;
+	border-radius: 20px;
+	text-decoration: none;
+	font-weight: 500;
+	text-align: center;
 }

@@ -47,10 +47,10 @@ const Home = () => {
 
 		if (window.innerWidth < 768) {
 			screenSpaceshipScale = [0.4, 0.4, 0.4];
-			screenSpaceshipPosition = [0, -1.92, 2];
+			screenSpaceshipPosition = [0, -1.8, 2];
 		} else {
 			screenSpaceshipScale = [0.35, 0.35, 0.35];
-			screenSpaceshipPosition = [0, -1.92, 2];
+			screenSpaceshipPosition = [0, -1.8, 2];
 		}
 
 		return [screenSpaceshipPosition, screenSpaceshipScale];

@@ -8,7 +8,7 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { a } from "@react-spring/three";
 
-import IslandScene from "../assets/japan-island3.glb";
+import IslandScene from "../assets/japan-island4.glb";
 
 const Island = ({
 	isRotating,
@@ -185,6 +185,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Circle001_4.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.cube.geometry}
 				material={materials.Metal}
 			/>
@@ -226,12 +232,6 @@ const Island = ({
 					material={materials["Balcony-2"]}
 				/>
 			</group>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.tree.geometry}
-				material={materials["Wood-3"]}
-			/>
 			<mesh
 				castShadow
 				receiveShadow
@@ -278,6 +278,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Cube061_5.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.Cylinder012.geometry}
 				material={materials.Bamboo}
 			/>
@@ -286,6 +292,12 @@ const Island = ({
 				receiveShadow
 				geometry={nodes.Cylinder012_1.geometry}
 				material={materials["Wood-2"]}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Cylinder012_2.geometry}
+				material={materials.OutLine}
 			/>
 			<mesh
 				castShadow
@@ -302,6 +314,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Cube084_2.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.Circle005.geometry}
 				material={materials["Metal-2"]}
 			/>
@@ -310,6 +328,12 @@ const Island = ({
 				receiveShadow
 				geometry={nodes.Circle005_1.geometry}
 				material={materials["red-2"]}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Circle005_2.geometry}
+				material={materials.OutLine}
 			/>
 			<mesh
 				castShadow
@@ -344,6 +368,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Cube075_3.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.Circle030.geometry}
 				material={materials["Balcony-2"]}
 			/>
@@ -357,37 +387,37 @@ const Island = ({
 				castShadow
 				receiveShadow
 				geometry={nodes.Cylinder006.geometry}
-				material={materials.Roof}
-			/>
-			<mesh
-				castShadow
-				receiveShadow
-				geometry={nodes.Cylinder006_1.geometry}
 				material={materials.Wood}
 			/>
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Cylinder006_2.geometry}
+				geometry={nodes.Cylinder006_1.geometry}
 				material={materials["Wood-door"]}
 			/>
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Cylinder006_3.geometry}
+				geometry={nodes.Cylinder006_2.geometry}
 				material={materials.Estructure}
 			/>
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Cylinder006_4.geometry}
+				geometry={nodes.Cylinder006_3.geometry}
 				material={materials["Balcony-2"]}
 			/>
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Cylinder006_5.geometry}
+				geometry={nodes.Cylinder006_4.geometry}
 				material={materials.Door}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Cylinder006_5.geometry}
+				material={materials.Roof}
 			/>
 			<mesh
 				castShadow
@@ -506,6 +536,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Cylinder006_25.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.Circle016.geometry}
 				material={materials["Land-6"]}
 			/>
@@ -518,14 +554,26 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Mesh_2.geometry}
+				geometry={nodes.Circle016_2.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Plane105.geometry}
 				material={materials["Leaf-b-2"]}
 			/>
 			<mesh
 				castShadow
 				receiveShadow
-				geometry={nodes.Mesh_3.geometry}
+				geometry={nodes.Plane105_1.geometry}
 				material={materials["Leaf-b"]}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Plane105_2.geometry}
+				material={materials.OutLine}
 			/>
 			<mesh
 				castShadow
@@ -538,6 +586,12 @@ const Island = ({
 				receiveShadow
 				geometry={nodes.Cube080_1.geometry}
 				material={materials.Rock}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Cube080_2.geometry}
+				material={materials.OutLine}
 			/>
 			<mesh
 				castShadow
@@ -578,6 +632,12 @@ const Island = ({
 			<mesh
 				castShadow
 				receiveShadow
+				geometry={nodes.Circle013_6.geometry}
+				material={materials.OutLine}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
 				geometry={nodes.Cube.geometry}
 				material={materials["Wood-door"]}
 			/>
@@ -604,6 +664,18 @@ const Island = ({
 				receiveShadow
 				geometry={nodes.Cube_4.geometry}
 				material={materials["Metal-2"]}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Vert002.geometry}
+				material={materials["Wood-3"]}
+			/>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.Vert002_1.geometry}
+				material={materials.OutLine}
 			/>
 		</a.group>
 	);

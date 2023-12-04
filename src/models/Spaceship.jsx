@@ -40,10 +40,10 @@ const Spaceship = ({
 				spaceshipRef.current.position.y -= deltaY * 0.035 * Math.PI;
 				spaceshipRef.current.rotation.x += deltaY * 0.01 * Math.PI;
 			} else if (limitRotation > 0.4) {
-				spaceshipRef.current.position.y = -2.4;
+				spaceshipRef.current.position.y = -2.6;
 				spaceshipRef.current.rotation.x = 1.4;
 			} else if (limitRotation < 0) {
-				spaceshipRef.current.position.y = -1;
+				spaceshipRef.current.position.y = -1.2;
 				spaceshipRef.current.rotation.x = 1.05;
 			}
 
