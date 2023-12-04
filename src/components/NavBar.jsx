@@ -9,7 +9,7 @@ const NavBar = () => {
 			>
 				<p className="blue-gradient_text">AH</p>
 			</NavLink>
-			<nav className="flex text-lg gap-7 font-medium">
+			<nav className="flex text-lg gap-7 font-medium select-none">
 				<NavLink
 					to="/about"
 					className={({ isActive }) =>
