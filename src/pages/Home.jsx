@@ -25,7 +25,7 @@ const Home = () => {
 
   const ajutIslandForScreenSize = () => {
     let screenScale = null;
-    let screenPosition = [0, -0.5, -4.5];
+    let screenPosition = [0, -1, -4.5];
     let islandRotation = [0.2, 4.7, 0];
 
     if (window.innerWidth < 768) {
@@ -84,8 +84,8 @@ const Home = () => {
             rotation={[Math.PI * 0.4, Math.PI * -0.5, Math.PI * 0.5]}
             limitRotation={limitRotation}
             isMoving={isMoving}
-            position={[0, -2, 0.5]}
-            scale={0.45}
+            position={[0, -1.8, 2]}
+            scale={0.35}
           />
         </Suspense>
 
