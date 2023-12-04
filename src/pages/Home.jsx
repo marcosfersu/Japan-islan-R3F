@@ -9,7 +9,7 @@ import {
 	PerspectiveCamera,
 	Stars,
 } from "@react-three/drei";
-import Spaceship from "./../models/SpaceShip";
+import Spaceship from "../models/SpaceShip";
 import HomeInfo from "../components/HomeInfo";
 
 {
