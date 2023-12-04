@@ -46,7 +46,7 @@ const Home = () => {
 		let screenSpaceshipPosition = null;
 
 		if (window.innerWidth < 768) {
-			screenSpaceshipScale = [0.5, 0.5, 0.5];
+			screenSpaceshipScale = [0.4, 0.4, 0.4];
 			screenSpaceshipPosition = [0, -1.92, 2];
 		} else {
 			screenSpaceshipScale = [0.35, 0.35, 0.35];
@@ -71,7 +71,7 @@ const Home = () => {
 			<Canvas
 				dpr={[1.5, 2]}
 				shadows
-				className="w-full h-screen bg-transparent"
+				className="w-full h-screen bg-transparent select-none"
 				camera={{ near: 0.1, far: 1000 }}
 			>
 				<fog attach="fog" args={["#ffff", 16, 30]} />
@@ -112,9 +112,11 @@ const Home = () => {
 						scale={screenSpaceshipScale}
 					/>
 				</Suspense>
-
-				<OrbitControls enableZoom={true} minDistance={1.5} maxDistance={8} />
-
+				<OrbitControls
+					enableZoom={window.innerWidth > 768}
+					minDistance={1.5}
+					maxDistance={8}
+				/>
 				<Stars radius={500} depth={50} count={1000} factor={10} noise={20} />
 			</Canvas>
 		</section>
