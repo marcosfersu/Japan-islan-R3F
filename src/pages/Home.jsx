@@ -12,6 +12,7 @@ import {
   PerspectiveCamera,
   Stars,
 } from "@react-three/drei";
+import Asteroids from "../models/Asteroids";
 
 {
   /* <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center">
@@ -111,6 +112,7 @@ const Home = () => {
             position={screenSpaceshipPosition}
             scale={screenSpaceshipScale}
           />
+          <Asteroids rotation={[Math.PI, 0, Math.PI * 0.05]} position-y={-3} />
         </Suspense>
         <OrbitControls
           enableZoom={window.innerWidth > 768}
