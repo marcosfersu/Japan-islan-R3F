@@ -55,10 +55,10 @@ const Spaceship = ({
     // implement delta in animation
     isMoving
       ? scene.rotation.x > Math.PI * -0.5
-        ? (scene.rotation.x -= 0.1)
+        ? (scene.rotation.x -= delta * 5)
         : null
-      : scene.rotation.x <= -0.1
-      ? (scene.rotation.x += 0.1)
+      : scene.rotation.x <= 0
+      ? (scene.rotation.x += delta * 5)
       : null;
   });
 
